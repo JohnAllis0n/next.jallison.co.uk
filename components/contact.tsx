@@ -22,13 +22,13 @@ import { Send } from "lucide-react";
 import dynamic from "next/dynamic";
 import { Spinner } from "./ui/spinner";
 
-const Turnstile = dynamic(
-  () => import("next-turnstile").then((d) => d.Turnstile),
-  {
-    ssr: false,
-    loading: () => <div className="flex justify-center m-2.5 h-15"><Spinner className="size-4">Loading CAPTCHA...</Spinner></div>,
-  }
-);
+const HCaptcha = dynamic(() => import("@hcaptcha/react-hcaptcha"), {
+  ssr: false,
+  loading: () => <div className="flex justify-center m-2.5 h-15"><Spinner className="size-4">Loading CAPTCHA...</Spinner></div>,
+});
+
+// Web3Forms' shared hCaptcha site key — Web3Forms verifies the token server-side.
+const HCAPTCHA_SITE_KEY = "50b2fe65-b00b-4b9e-ad62-3ba471098be2";
 
 export const FormSchema = z.object({
   name: z.string().min(1, {
@@ -47,7 +47,9 @@ export const FormSchema = z.object({
 
 export const Contact = () => {
   const [isFormDirty, setIsFormDirty] = useState<boolean>(false);
-  const [turnstileVerified, setTurnstileVerified] = useState<boolean>(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  // hCaptcha tokens are single-use; bumping this remounts the widget for a fresh challenge.
+  const [captchaKey, setCaptchaKey] = useState<number>(0);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     mode: "onSubmit",
@@ -59,32 +61,41 @@ export const Contact = () => {
   });
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    if (!turnstileVerified) {
+    if (!captchaToken) {
       toast("Please complete the captcha!");
       return;
     }
     const postData = {
       ...data,
       access_key: process.env.NEXT_PUBLIC_FORM_API_KEY,
+      "h-captcha-response": captchaToken,
     };
 
-    await fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify(postData, null, 2),
-    }).then(async (response) => {
-      const json = await response.json();
-      if (json.success) {
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(postData),
+      });
+      const json = await response.json().catch(() => null);
+      if (response.ok && json?.success) {
         toast("Message sent to me! <3");
         form.reset();
+        setIsFormDirty(false);
       } else {
         toast("An Error Occurred!");
-        console.error(json.message());
+        console.error(json?.message ?? `HTTP ${response.status}`);
       }
-    });
+    } catch (error) {
+      toast("Couldn't send your message, please try again later.");
+      console.error(error);
+    } finally {
+      setCaptchaToken(null);
+      setCaptchaKey((k) => k + 1);
+    }
   };
 
   return (
@@ -150,18 +161,28 @@ export const Contact = () => {
           </div>
           {isFormDirty && (
             <div className="flex justify-center m-2.5 h-15">
-              <Turnstile
-                siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ""}
-                onVerify={() => setTurnstileVerified(true)}
-                onError={() => setTurnstileVerified(false)}
-                onExpire={() => setTurnstileVerified(false)}
-                theme={"dark"}
+              <HCaptcha
+                key={captchaKey}
+                sitekey={HCAPTCHA_SITE_KEY}
+                reCaptchaCompat={false}
+                onVerify={(token) => setCaptchaToken(token)}
+                onError={() => setCaptchaToken(null)}
+                onExpire={() => setCaptchaToken(null)}
+                theme="dark"
               />
             </div>
           )}
           <div className="flex justify-center m-2.5">
-            <Button type="submit" className="cursor-pointer">
-              <Send className="mr-3" />
+            <Button
+              type="submit"
+              className="cursor-pointer"
+              disabled={form.formState.isSubmitting}
+            >
+              {form.formState.isSubmitting ? (
+                <Spinner className="mr-3" />
+              ) : (
+                <Send className="mr-3" />
+              )}
               Submit
             </Button>
           </div>
