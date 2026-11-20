@@ -86,7 +86,7 @@ export const javascriptFrameworks: Skills[] = [
   },
   {
     name: 'Shadcn',
-    proficiency: 6,
+    proficiency: 8,
   },
 ];
 
@@ -110,5 +110,13 @@ export const devops: Skills[] = [
   {
     name: 'TurtleSVN',
     proficiency: 8,
+  },
+  {
+    name: 'Jira',
+    proficiency: 4,
+  },
+  {
+    name: 'Bitbucket',
+    proficiency: 5,
   }
 ];
