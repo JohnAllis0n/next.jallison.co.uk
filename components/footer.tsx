@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const Footer = () => {
   return (
-    <main className="flex min-h-fit flex-col items-center p-16 overflow-hidden">
+    <footer className="flex min-h-fit flex-col items-center p-16 overflow-hidden">
       <p className="leading-7 [&:not(:first-child)]:mt-6">
         Created in&nbsp;
         <Link
@@ -63,6 +63,6 @@ export const Footer = () => {
         </Link>
         &nbsp;John Allison 2018 - {new Date().getFullYear()}.
       </p>
-    </main>
+    </footer>
   );
 };

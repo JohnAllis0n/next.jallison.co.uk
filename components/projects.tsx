@@ -41,22 +41,24 @@ export const Projects = () => {
     return array;
   };
 
+  // Shuffle after mount (not during render) so the static HTML and the first
+  // client render match; copy first so the shared `projects` array isn't mutated.
   useEffect(() => {
-    const shuffled = shuffle(projects);
-    setShuffledProjects(shuffled);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional post-hydration shuffle
+    setShuffledProjects(shuffle([...projects]));
   }, []);
 
   return (
-    <main
+    <section
       id="projects"
       className="flex min-h-fit flex-col items-center p-24 overflow-hidden"
     >
-      <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl pb-3">
+      <h2 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl pb-3">
         &lt;Projects&#47;&gt;
-      </h1>
-      <h2 className="scroll-m-20 text-2xl font-semibold tracking-tight pb-3">
-        Here are some of my personal projects.
       </h2>
+      <p className="scroll-m-20 text-2xl font-semibold tracking-tight pb-3">
+        Here are some of my personal projects.
+      </p>
       <div className="w-full flex justify-center">
         <Carousel
           className="w-full max-w-xl"
@@ -120,6 +122,6 @@ export const Projects = () => {
           <CarouselNext />
         </Carousel>
       </div>
-    </main>
+    </section>
   );
 };

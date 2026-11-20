@@ -108,7 +108,7 @@ export const devops: Skills[] = [
     proficiency: 8,
   },
   {
-    name: 'TurtleSVN',
+    name: 'TortoiseSVN',
     proficiency: 8,
   },
   {

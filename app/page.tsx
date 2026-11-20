@@ -9,10 +9,12 @@ import { Projects } from "@/components/projects";
 export default function Page() {
   return (
     <>
-      <Home />
-      <About />
-      <Projects />
-      <Contact />
+      <main>
+        <Home />
+        <About />
+        <Projects />
+        <Contact />
+      </main>
       <Footer />
     </>
   );

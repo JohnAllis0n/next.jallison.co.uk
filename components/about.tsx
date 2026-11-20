@@ -20,13 +20,13 @@ import { FileText } from "lucide-react";
 
 export const About = () => {
   return (
-    <main
+    <section
       id="about"
       className="flex min-h-fit flex-col items-center p-24 overflow-hidden"
     >
-      <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl pb-3">
+      <h2 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl pb-3">
         &lt;About&#47;&gt;
-      </h1>
+      </h2>
       <Card className="max-w-1/2">
         <CardHeader>
           <CardTitle>Hi, I&apos;m John.</CardTitle>
@@ -96,6 +96,6 @@ export const About = () => {
           </Link>
         </CardFooter>
       </Card>
-    </main>
+    </section>
   );
 };

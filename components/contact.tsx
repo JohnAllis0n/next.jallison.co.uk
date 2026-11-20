@@ -22,13 +22,13 @@ import { Send } from "lucide-react";
 import dynamic from "next/dynamic";
 import { Spinner } from "./ui/spinner";
 
-const HCaptcha = dynamic(() => import("@hcaptcha/react-hcaptcha"), {
-  ssr: false,
-  loading: () => <div className="flex justify-center m-2.5 h-15"><Spinner className="size-4">Loading CAPTCHA...</Spinner></div>,
-});
-
-// Web3Forms' shared hCaptcha site key — Web3Forms verifies the token server-side.
-const HCAPTCHA_SITE_KEY = "50b2fe65-b00b-4b9e-ad62-3ba471098be2";
+const Turnstile = dynamic(
+  () => import("next-turnstile").then((d) => d.Turnstile),
+  {
+    ssr: false,
+    loading: () => <div className="flex justify-center m-2.5 h-15"><Spinner className="size-4">Loading CAPTCHA...</Spinner></div>,
+  }
+);
 
 export const FormSchema = z.object({
   name: z.string().min(1, {
@@ -47,9 +47,7 @@ export const FormSchema = z.object({
 
 export const Contact = () => {
   const [isFormDirty, setIsFormDirty] = useState<boolean>(false);
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-  // hCaptcha tokens are single-use; bumping this remounts the widget for a fresh challenge.
-  const [captchaKey, setCaptchaKey] = useState<number>(0);
+  const [turnstileVerified, setTurnstileVerified] = useState<boolean>(false);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     mode: "onSubmit",
@@ -61,14 +59,13 @@ export const Contact = () => {
   });
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    if (!captchaToken) {
+    if (!turnstileVerified) {
       toast("Please complete the captcha!");
       return;
     }
     const postData = {
       ...data,
       access_key: process.env.NEXT_PUBLIC_FORM_API_KEY,
-      "h-captcha-response": captchaToken,
     };
 
     try {
@@ -84,7 +81,6 @@ export const Contact = () => {
       if (response.ok && json?.success) {
         toast("Message sent to me! <3");
         form.reset();
-        setIsFormDirty(false);
       } else {
         toast("An Error Occurred!");
         console.error(json?.message ?? `HTTP ${response.status}`);
@@ -92,20 +88,17 @@ export const Contact = () => {
     } catch (error) {
       toast("Couldn't send your message, please try again later.");
       console.error(error);
-    } finally {
-      setCaptchaToken(null);
-      setCaptchaKey((k) => k + 1);
     }
   };
 
   return (
-    <main
+    <section
       id="contact"
       className="flex min-h-fit flex-col items-center p-24 overflow-hidden"
     >
-      <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl pb-3">
+      <h2 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl pb-3">
         &lt;Contact&#47;&gt;
-      </h1>
+      </h2>
       <Toaster />
       <Form {...form}>
         <form
@@ -136,7 +129,7 @@ export const Contact = () => {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="Email" {...field} />
+                      <Input type="email" autoComplete="email" placeholder="Email" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -161,14 +154,12 @@ export const Contact = () => {
           </div>
           {isFormDirty && (
             <div className="flex justify-center m-2.5 h-15">
-              <HCaptcha
-                key={captchaKey}
-                sitekey={HCAPTCHA_SITE_KEY}
-                reCaptchaCompat={false}
-                onVerify={(token) => setCaptchaToken(token)}
-                onError={() => setCaptchaToken(null)}
-                onExpire={() => setCaptchaToken(null)}
-                theme="dark"
+              <Turnstile
+                siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ""}
+                onVerify={() => setTurnstileVerified(true)}
+                onError={() => setTurnstileVerified(false)}
+                onExpire={() => setTurnstileVerified(false)}
+                theme={"dark"}
               />
             </div>
           )}
@@ -188,6 +179,6 @@ export const Contact = () => {
           </div>
         </form>
       </Form>
-    </main>
+    </section>
   );
 };

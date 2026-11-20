@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export const Home = () => {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24 overflow-hidden">
+    <section className="flex min-h-screen flex-col items-center justify-center p-24 overflow-hidden">
       <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl pb-3">
         {"<John Allison/>"}
       </h1>
@@ -35,6 +35,6 @@ export const Home = () => {
           );
         })}
       </div>
-    </main>
+    </section>
   );
 };
