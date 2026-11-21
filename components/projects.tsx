@@ -104,7 +104,7 @@ export const Projects = () => {
                   <CardFooter className="items-center flex flex-col">
                     <Link
                       key={`project-link-${project.url}-all`}
-                      href="https://github.com/DannyDorito"
+                      href="https://github.com/JohnAllis0n"
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label='GitHub'

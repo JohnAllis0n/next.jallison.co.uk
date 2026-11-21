@@ -17,7 +17,7 @@ export const socialData: SocialData[] = [
   {
     platform: 'GitHub',
     icon: GitFork,
-    link: 'https://github.com/DannyDorito',
+    link: 'https://github.com/JohnAllis0n',
   },
   {
     platform: 'Resume',

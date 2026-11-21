@@ -53,7 +53,7 @@ export const Footer = () => {
       </p>
       <p className="leading-7 [&:not(:first-child)]:mt-6 flex items-center">
         <Link
-          href="https://github.com/DannyDorito/next.jallison.co.uk?tab=Unlicense-1-ov-file#readme"
+          href="https://github.com/JohnAllis0n/next.jallison.co.uk?tab=Unlicense-1-ov-file#readme"
           target="_blank"
           rel="noopener noreferrer"
           className="flex flex-row"

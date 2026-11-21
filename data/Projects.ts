@@ -34,7 +34,7 @@ export const projects: Project[] = [
   {
     name: 'This Portfolio Website',
     description: `GitHub Repo of this Website's Code, written in Next.js.`,
-    url: 'https://github.com/DannyDorito/next.jallison.co.uk',
+    url: 'https://github.com/JohnAllis0n/next.jallison.co.uk',
     image: portfolio
   },
   {
@@ -47,25 +47,25 @@ export const projects: Project[] = [
   {
     name: 'npp-sqf',
     description: `Notepad++ Syntax Highlighting for ARMA's scripting language.`,
-    url: 'https://github.com/DannyDorito/npp-sqf',
+    url: 'https://github.com/JohnAllis0n/npp-sqf',
     image: nppSqf
   },
   {
     name: 'Knockout.js Context Debugger',
     description: 'Current maintainer for chrome dev tools extension Knockout.js apps.',
-    url: 'https://github.com/DannyDorito/chromeextensions-knockoutjs',
+    url: 'https://github.com/JohnAllis0n/chromeextensions-knockoutjs',
     image: knockout
   },
   {
     name: 'DayZ Startup Script',
     description: 'The best script for creating a DayZ server, a .bat file for all your DayZ Server startup needs!',
-    url: 'https://github.com/DannyDorito/DayZ-Startup-and-Restart-Script',
+    url: 'https://github.com/JohnAllis0n/DayZ-Startup-and-Restart-Script',
     image: dayz
   },
   {
     name: 'Bundle ARMA Commands',
     description: 'Small Web Scraper to help find new ARMA scripting commands from various Wikis.',
-    url: 'https://github.com/DannyDorito/BundleARMACommands',
+    url: 'https://github.com/JohnAllis0n/BundleARMACommands',
     image: bundler
   }
   ,
